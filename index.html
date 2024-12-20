@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <style>
+
+      body{
+        background-color: darksalmon;  /* Styl pro pozadí stránky */
+      }
+
+        .div{ /* Využití grid pro centrování obsahu na stránce */
+          display: grid;
+          place-items: center;
+        }
+
+        .h1-container{  /* Styl pro nadpis */
+         text-align: center; 
+        }
+
+        .h1{/* Styl pro hlavní nadpis */
+            color: white;
+            font-family: arial, Roboto;
+            margin-bottom: 5px;
+        }
+
+        .par{  /* Styl pro podnadpisnou větu */
+            color: white;
+            font-family: arial, Roboto;
+            font-size: 18px;
+            margin-top: 5px;
+        }
+
+        .input{  /* Styl pro vstupní pole pro číslo */
+            border-radius: 30px;
+            border: solid;
+            border-color: rgb(160, 125, 90);
+            margin-bottom: 15px;
+            outline: none;
+            padding: 2px 0 2px 10px;
+            color: rgb(85, 85, 85);
+          }
+
+
+        .button{  /* Styl pro tlačítka */
+            color: black;
+            background-color: rgb(160, 125, 90);
+            font-family: arial, Roboto;
+            border-radius: 30px;
+            border: none;
+            padding: 5px 10px 5px 10px;
+            box-shadow: 0 0 5px black; 
+            margin-bottom: 20px;
+            font-weight:bold;
+            font-size: 17px;
+            transition: 0.15s;
+            margin: 0 auto;
+            margin-bottom: 15px;
+        }
+
+        .button:hover{ /* Hover efekt pro tlačítka */
+          background-color: rgb(189, 148, 108);
+        }
+
+        .button:active{  /* Efekt při aktivaci tlačítka */
+          opacity: 0.85;
+        }
+
+        #container-win{   /* Styl pro výherní obrazovku */
+            z-index: 10;
+            overflow: hidden;
+            
+            height: 100%;
+            width: 80%;
+            background-color: white;
+            border-radius: 20px;
+            height: 60;
+            display: grid;
+            place-items: center;
+            box-shadow: 0 0px 15px black;
+            display: none;
+            
+        }
+
+        #win-text{ 
+          /* Styl pro text s gratulací */
+            z-index: 10;
+            overflow: hidden;
+            
+
+            font-family: Arial;
+            font-weight: bold;
+            font-size: 2em;
+
+            transition: 0.15s;
+            font-weight: bold;
+            font-size: 2em;
+        }
+
+       
+        #button-win{     /* Styl pro tlačítko na výherní obrazovce */
+            padding:  1% 3% 1% 3%;
+            margin-bottom: 10px;
+            background-color: rgb(160, 125, 90);
+            border: none;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 2em;
+            
+        }
+        #button-win:hover{  /* Hover efekt pro tlačítko ve výherní obrazovce */
+            background-color: rgb(189, 148, 108);
+        }
+        #button-win:active{  /* Efekt při aktivaci tlačítka ve výherní obrazovce */
+          opacity: 0.85;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="div">
+      <div class="h1-container">
+        <h1 class="h1">Guessing random number game!</h1>
+      </div><br>
+        <p class="par">Enter a number between 1 - 10</p>
+        <input class="input" type="text" id="numberBox">
+        <button class="button" id="submitButton">submit</button>
+
+<!-- Výherní obrazovka, která je skrytá na začátku -->
+            <div id="container-win"> 
+                <p id="win-text">You won!</p><label id="guessesLbl"></label>
+                <button id="button-win">ok</button>
+            </div>
+        <!-- Tlačítko pro opětovné spuštění hry -->
+            <button class="button" id="playAgainBtn">play again</button>
+    <div>
+    <script>
+
+       // Generování náhodného čísla mezi 1 a 10
+      const answer = Math.floor(Math.random() * 10) + 1;
+      let guesses = 0; // Počet pokusů
+
+// Funkce pro odeslání tipu čísla
+      document.getElementById('submitButton').onclick = function() {
+        const guess = document.getElementById('numberBox').value; // Načte hodnotu z inputu
+
+// Kontrola, zda zadaná hodnota je číslo
+          if(isNaN(guess)){
+          alert('Please enter a number!');
+          return;
+          }
+
+        guesses++; // Zvýšení počtu pokusů
+
+        // Kontrola, zda je hádané číslo správné
+        if (guess == answer) {
+          // Zobrazení výherní obrazovky
+            document.getElementById('container-win').style.display = 'grid';
+
+            // Zobrazení počtu pokusů
+            document.getElementById('guessesLbl').innerHTML = `It took you ${guesses} guesses!`
+        } else if (guess < answer) {
+          alert('Too small'); // Příliš malé číslo
+        } else if (guess > answer){
+          alert('Too big'); // Příliš velké číslo
+        }
+        else if(""){
+          alert('Please enter a number!'); // Zadaná hodnota není číslo
+          return
+        }
+        
+        
+      }
+  // Funkce pro zavření výherní obrazovky
+      document.getElementById('button-win').onclick = function(){
+        document.getElementById('container-win').style.display = 'none';
+      }
+
+ // Funkce pro opětovné spuštění hry (obnovení stránky)
+      document.getElementById('playAgainBtn').onclick = function(){
+        window.location.reload();
+      }
+      
+      // Funkce pro d stisknutí klávesy Enter a automatické odeslání tipu čísla
+      document.getElementById('numberBox').addEventListener("keyup", function(event) {
+        event.preventDefault();
+        if (event.keyCode === 13) {
+          document.getElementById("submitButton").click(); //Odeslání tipu při stisknutí Enter
+        } 
+        }
+     );
+
+      
+
+    </script>
+</body>
+</html>
