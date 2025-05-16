@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Guessing Game</title>
+    <style>
+        /*  styly pro pozadí, fonty a layout celé stránky */
+        body {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            font-family: Arial, Roboto, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+        }
+/* Kontejner pro hlavní obsah s responzivním flex layoutem */
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            width: 100%;
+            gap: 20px;
+        }
+/* Herní oblast na levé straně */
+        .game-area {
+            flex: 1;
+            min-width: 300px;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+        }
+/* Oblast pro historii skóre */
+        .score-area {
+            flex: 0 0 250px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            color: white;
+        }
+/* Nadpis hry */
+        .h1-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .h1 {
+            color: white;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+        }
+/* podnadpisy a další texty */
+        .par {
+            color: white;
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+
+        .stats {
+            color: white;
+            font-size: 1.1em;
+            margin: 10px 0;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+        }
+ /* Styl vstupního pole a výběru obtížnosti */
+        .input, .difficulty-select {
+            border-radius: 30px;
+            border: 2px solid #8b5a2b;
+            margin: 10px 0;
+            padding: 8px 15px;
+            font-size: 1em;
+            outline: none;
+            color: #333;
+            width: 200px;
+            transition: border-color 0.3s;
+        }
+
+        .input:focus, .difficulty-select:focus {
+            border-color: #d4a373;
+        }
+/* Styl tlačítek */
+        .button {
+            color: white;
+            background: #8b5a2b;
+            font-family: Arial, Roboto, sans-serif;
+            border-radius: 30px;
+            border: none;
+            padding: 10px 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            font-size: 1em;
+            transition: background 0.2s, transform 0.1s;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        .button:hover {
+            background: #a67b5b;
+            transform: scale(1.05);
+        }
+
+        .button:active {
+            transform: scale(0.95);
+        }
+/*  okno po výhře */
+        #container-win {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            display: none;
+            text-align: center;
+            z-index: 100;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        #win-text {
+            font-family: Arial, Roboto, sans-serif;
+            font-weight: bold;
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+/* Trofej s animací při výhře */
+        #victory-character {
+            width: 100px;
+            height: 100px;
+            background: url('https://img.icons8.com/emoji/96/trophy-emoji.png') no-repeat center;
+            background-size: contain;
+            margin: 0 auto 20px;
+            animation: bounce 0.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+/* Styl tlačítka uvnitř  okna */
+        #button-win {
+            padding: 10px 20px;
+            background: #8b5a2b;
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            margin: 10px;
+        }
+
+        #button-win:hover {
+            background: #a67b5b;
+            transform: scale(1.05);
+        }
+
+        #button-win:active {
+            transform: scale(0.95);
+        }
+/* Buttony pro zpětnou vazbu (Like/Dislike) */
+        .feedback-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .feedback-button {
+            background: #8b5a2b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .feedback-button:hover {
+            background: #a67b5b;
+            transform: scale(1.05);
+        }
+
+        .feedback-button:active {
+            transform: scale(0.95);
+        }
+/* Tabulka historie skóre */
+        .score-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .score-table th, .score-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .score-table th {
+            font-weight: bold;
+        }
+/* Responzivní úpravy pro mobilní zobrazení */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .game-area, .score-area {
+                flex: 1;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .input, .difficulty-select {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .h1 {
+                font-size: 2em;
+            }
+
+            .par, .stats {
+                font-size: 1em;
+            }
+
+            .score-area {
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-area">
+            <div class="h1-container">
+                <h1 class="h1">Guessing Random Number Game!</h1>
+            </div>
+            <!--Text s informací o rozsahu dle obtížnosti-->
+            <p class="par" id="range-text">Select a difficulty to start</p>
+            <!-- Výběr obtížnosti určuje max. hodnota náhodného čísla -->
+            <select id="difficulty" class="difficulty-select">
+                <option value="50">Easy (1–50)</option>
+                <option value="100" selected>Medium (1–100)</option>
+                <option value="150">Hard (1–150)</option>
+            </select>
+            <!-- Zobrazení počtu pokusů a uplynulého času -->
+            <div class="stats">
+                Guesses: <span id="guessCount">0</span> | Time: <span id="timer">0:00</span>
+            </div>
+              <!-- Vstup a tlačítka pro hru -->
+            <input class="input" type="number" id="numberBox" placeholder="Your guess">
+            <button class="button" id="submitButton">Submit</button>
+            <button class="button" id="playAgainBtn">Play Again</button>
+<!-- okno po úspěšném uhodnutí -->
+            <div id="container-win">
+                <div id="victory-character"></div>
+                <p id="win-text">You Won!</p>
+                <p id="guessesLbl"></p>
+                <div>
+                    <p>How did you like the game?</p>
+                    <div class="feedback-buttons">
+                        <button class="feedback-button" id="like-button">Like</button>
+                        <button class="feedback-button" id="dislike-button">Dislike</button>
+                    </div>
+                </div>
+                <button id="button-win">OK</button>
+            </div>
+        </div>
+        <!-- Historie skóre uložená v localStorage -->
+        <div class="score-area">
+            <h2>Score History</h2>
+            <table class="score-table">
+                <thead>
+                    <tr>
+                        <th>Difficulty</th>
+                        <th>Guesses</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody id="score-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+<!-- Znělka -->
+    <audio id="victorySound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+
+    <script>
+        // Generování náhodného čísla podle  obtížnosti (1–100)
+        let answer = Math.floor(Math.random() * 100) + 1;
+        let guesses = 0;
+        let startTime = null;
+        let timerInterval = null;
+        let maxRange = 100;
+        let difficulty = 'Medium';
+        // Načtení uložené skóre a zpětné vazby nebo prázdné pole
+        let scores = JSON.parse(localStorage.getItem('guessGameScores')) || [];
+        let feedbackList = JSON.parse(localStorage.getItem('guessGameFeedback')) || [];
+
+        /*
+          Spustí timer: uloží čas spuštění a nastaví každosekundní update
+         */
+
+        function startTimer() {
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+/*
+          Aktualizuje zobrazení timeru 
+         */
+        function updateTimer() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('timer').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+/*
+          Zastaví průběžné volání updateTimer()  intervalu
+         */
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+ /*
+          Vyčistí a Naplní tabulku historie, skóre z pole scores
+         */
+        function updateScoreTable() {
+            const tbody = document.getElementById('score-table-body');
+            tbody.innerHTML = '';
+            scores.forEach(score => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${score.difficulty}</td>
+                    <td>${score.guesses}</td>
+                    <td>${score.time}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+/*
+          Resetuje hru: nová odpověď, vynuluje pokusy a timer, aktualizuje text 
+         */
+        function resetGame() {
+            maxRange = parseInt(document.getElementById('difficulty').value);
+            answer = Math.floor(Math.random() * maxRange) + 1;
+            guesses = 0;
+            document.getElementById('guessCount').textContent = guesses;
+            document.getElementById('numberBox').value = '';
+            document.getElementById('range-text').textContent = `Enter a number between 1 - ${maxRange}`;
+            difficulty = document.getElementById('difficulty').options[document.getElementById('difficulty').selectedIndex].text.split(' ')[0];
+            stopTimer();
+            startTimer();
+        }
+// I načtení stránky
+        startTimer();
+        updateScoreTable();
+// Pro změnu obtížnosti
+        document.getElementById('difficulty').onchange = resetGame;
+// Odeslání tipu
+        document.getElementById('submitButton').onclick = function() {
+            const guess = document.getElementById('numberBox').value;
+            if (isNaN(guess) || guess === '') {
+                alert('Please enter a number!');
+                return;
+            }
+// vstupu
+            const numGuess = parseInt(guess);
+            if (numGuess < 1 || numGuess > maxRange) {
+                alert(`Please enter a number between 1 and ${maxRange}!`);
+                return;
+            }
+// Zvýšení počtu pokusů a aktualizace zobr.
+            guesses++;
+            document.getElementById('guessCount').textContent = guesses;
+// Kontrola výsledku
+            if (numGuess === answer) {
+                stopTimer();
+                const timeTaken = document.getElementById('timer').textContent;
+                // Uložení do historie a nová tabulka
+                scores.push({ difficulty, guesses, time: timeTaken });
+                localStorage.setItem('guessGameScores', JSON.stringify(scores));
+                updateScoreTable();
+                // Zobrazení  okna s výsledky
+                document.getElementById('container-win').style.display = 'block';
+                document.getElementById('guessesLbl').innerHTML = `It took you ${guesses} guesses and ${timeTaken}!`;
+                document.getElementById('victorySound').play();
+            } else if (numGuess < answer) {
+                alert('Too small');
+            } else {
+                alert('Too big');
+            }
+        };
+// Zpětná vazba: Like
+        document.getElementById('like-button').onclick = function() {
+            feedbackList.push('Like');
+            localStorage.setItem('guessGameFeedback', JSON.stringify(feedbackList));
+            alert('Thank you for your feedback!');
+        };
+// Zpětná vazba: Dislike
+        document.getElementById('dislike-button').onclick = function() {
+            feedbackList.push('Dislike');
+            localStorage.setItem('guessGameFeedback', JSON.stringify(feedbackList));
+            alert('Thank you for your feedback!');
+        };
+
+// Zavření  okna 
+        document.getElementById('button-win').onclick = function() {
+            document.getElementById('container-win').style.display = 'none';
+        };
+// Play Again: reset hry
+        document.getElementById('playAgainBtn').onclick = resetGame;
+// Enter
+        document.getElementById('numberBox').addEventListener("keyup", function(event) {
+            if (event.keyCode === 13) {
+                document.getElementById("submitButton").click();
+            }
+        });
+    </script>
+</body>
+</html>
