@@ -9,4 +9,26 @@ Na vytvoření této hry jsem si rozmyslel, jak hra bude fungovat a jak bude vyp
 Do budoucna bych těl určitě vylepšit, aby tato hra měla větší rozsah čísel (např. 1-100), přidal bych časovač za jak dlouho hráč uhodl číslo a vylepšit vzhledově skóre a celkově vylepšit stránku vzheledově. Když hráč vyhraje tak, aby se mu ukázala animace, kde by byl panáček s pohárem nebo by zazněla výherní znělka. Tento projekt mi pomohl lépe pochopit práci s HTML, CSS a JavaSriptu. Byla to pro mě velká výzva něco takového udělat a hlvně jsem se naučil více programovat.
 
 Při této práci jsem používal tyto zdroje https://developer.mozilla.org/en-US/; https://www.w3schools.com/
+
+
+
+Dobrý den pane učiteli, posílám Vám vypracovaný ročníkový projekt, ve kterém jsem pokračoval.
+Cílem mého ročníkového projektu bylo vytvořit hru "Uhodni číslo", kde uživatel háda náhodně vygenerované číslo, aby to číslo uhádl v co nejmenším počtu pokusů. Projekt byl rozdělen do dvou fází. První pololetí: Základní verze hry s jednoduchými kódy kde uživatel háda číslo v rozsahu 1-10. Hra měla být funkční ale s minimálními funkcemi a designem. Druhé pololetí: Vylepšení hry, kde jsou vidět pokročilé funkce, jako jsou volitelné úrovně obtížnosti, časovač, tabulka s historií, skórem, responzivní funkce a moderním  designem. Hra byla vyvinuta v HTML, CSS a JavaScriptu, s cílem procvičit mé programovací dovednosti a aplikovat  znalosti z výuky. Projekt by měl být zábavný, přehledný a hlavně s důrazem na uživatelský zážitek, který si uživatel odnese.
+
+V první verzi jsem vytvořil jednoduchou hru s těmito vlastnostmi: Kde uživatel hádá číslo od  1 do 10. Po uhodnutí se zobrazila výherní obrazovka s počtem pokusů. Pro zpětnou vazbu uživatele jsem použil alert() pro zprávy, jako "Too small", "Too big" nebo "you won". Design stránky měla statické pozadí (darksalmon), nadpis, vstupní pole a tlačítka, centrovaná pomocí CSS grip. styl byl základní a nepřizpůsoboval  se různým zařízením. Pro restart hry jsem použil tlačítko "play again" obnovilo stránku pomocí window.location.reload(). V první verzi byl byl program příliš jednoduchý, a což hru rychle zjednodušilo, nebyl responzivní na mobilní zařízení, kde vypadá špatně a chyběly funkce, jako časovač, tabulka historie se skórem nebo možnosti se změnou obtížnosti.
+
+Ve druhé verzi jsem hru rozšířil a vylepšil o tyto funkce: Úroveň obtížnosti, kde je na výběr "Easy" (1-50), "Medium" (1-100) a "Hard" (1-150) pomocí "<select>" funkcí. Použití časovače, který jsem implementoval měření času od startu hry do výhry, zobrazené ve formátu minut a sekund - "setInterval" je pro aktulizaci času a "clearInterval" je pro jeho zastavení po výhře. Vytvořil jsem tabulku s historií a skórem, která ukazovala výsledky (obtížnost, počet pokusů, čas), ukládaná do "localStorage". Výherní obrazovku jsem nahradil "alert()" animovanou obrazovkou s trofejí a tlačítky "Like"/"Dislike" pro zpětnou vazbu, kde zazní také znělka. Pro vizuální tvorbu jsem použil gradientní pozadí, které působí přitažlivě a vezme vás do hloubky  té  to hry, flexbox pro rozvržení a media  queries  pro responzivitu na různých zařízeních. Kódy jsem rozdělil javascriptu do funkcí ( startTimer(),  resetGame()) pro lepší přehlednost.
+
+Mé problémy, které jsem musel řešit. Při každém restartu hry se timer spouštěl znova bez zastavení předchozího intervalu- Před vyvoláním nového "setInterval" vždy volal "clearInterval(timerInterval)" v metodě stopTimer(). Nový interval se pak zakládá až po vynulování a opětovném zavolání startTimer(). Při prvním uložení do localStorage nebylo vždy ověřeno, že v něm již existuje platný JSON - Na začátku kódu jsem použil, 
+let scores = JSON.parse(localStorage.getItem('guessGameScores')) || [];
+let feedbackList = JSON.parse(localStorage.getItem('guessGameFeedback')) || [];
+tím zajistím, že v případě null vrátí [] a nevyhazuje chybu. Po uložení nové položky se tabulka „Score History“ nezaktualizovala okamžitě. Po zápisu do localStorage a scores.push() volám updateScoreTable(), aby se DOM přetvořil na nová data. Poprvé jsem neměl responzivní a funkci a na to jsem použil flexbox media queries pro použití na menší obrazovkách a aby měli uzivatelé na  mobilech lepší prožitek. 
+
+Poděkování
+Rád bych poděkoval svému spolužákovi Matějovi Vítovy za pomoc s laděním funkce časovače a tabulky za cenné připomínky k programovaní.
+
+
+Zdroje: https://developer.mozilla.org/en-US/; https://css-tricks.com/;https://www.w3schools.com/
+
+ 
  
